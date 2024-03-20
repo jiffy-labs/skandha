@@ -12,6 +12,7 @@ import { INetworkEventBus } from "./events";
 import { MetadataController } from "./metadata";
 import { BundlerGossipsub } from "./gossip";
 import { ReqRespNode } from "./reqresp/ReqRespNode";
+import { Jiffyscan } from "../jiffyscan/publish";
 
 export type PeerSearchOptions = {
   supportsProtocols?: string[];
@@ -24,6 +25,7 @@ export interface INetwork {
   gossip: BundlerGossipsub;
   reqResp: ReqRespNode; //TODO - Define the class for reqResp
   logger: Logger;
+  jiffyscan: Jiffyscan;
 
   /** Our network identity */
   peerId: PeerId;

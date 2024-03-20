@@ -9,18 +9,21 @@ import { GossipHandlers, GossipType } from "../gossip/interface";
 import { validateGossipVerifiedUserOperation } from "../validation";
 import { NetworkEventBus } from "../events";
 import { GossipValidationError } from "../gossip/errors";
+import { Jiffyscan } from "../../jiffyscan/publish";
 
 export type ValidatorFnsModules = {
   relayersConfig: Config;
   events: NetworkEventBus;
   executor: Executor;
   metrics: AllChainsMetrics | null;
+  jiffyscan: Jiffyscan
 };
 
 export function getGossipHandlers(
   modules: ValidatorFnsModules
 ): GossipHandlers {
-  const { relayersConfig, executor } = modules;
+  const { relayersConfig, executor, jiffyscan } = modules;
+
   async function validateVerifiedUserOperation(
     userOp: ts.VerifiedUserOperation,
     mempool: string,
@@ -35,6 +38,7 @@ export function getGossipHandlers(
       },
       "Received gossip block"
     );
+    await jiffyscan.publish(userOp, mempool, seenTimestampSec);
     try {
       await validateGossipVerifiedUserOperation(relayersConfig, userOp);
       logger.debug("Validation successful");

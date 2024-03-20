@@ -17,23 +17,28 @@ import {
   SyncModules,
   SyncState,
 } from "./interface";
+import { Jiffyscan, JiffyscanParams } from "../jiffyscan/publish";
 
 export class SyncService implements ISyncService {
   state: SyncState;
   peers: PeerMap<PeerState> = new PeerMap();
+
+  jiffyscan: Jiffyscan;
 
   private readonly network: INetwork;
   private readonly metrics: AllChainsMetrics | null;
   private readonly executor: Executor;
   private readonly executorConfig: Config;
 
-  constructor(modules: SyncModules) {
+  constructor(modules: SyncModules, jiffyscanParams: JiffyscanParams) {
     this.state = SyncState.Stalled;
 
     this.network = modules.network;
     this.metrics = modules.metrics;
     this.executor = modules.executor;
     this.executorConfig = modules.executorConfig;
+
+    this.jiffyscan = new Jiffyscan(jiffyscanParams);
 
     this.network.events.on(NetworkEvent.peerConnected, this.addPeer);
     this.network.events.on(

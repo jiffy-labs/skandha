@@ -7,11 +7,13 @@ import { createGossipQueues } from "./gossipQueues";
 import { PendingGossipsubMessage } from "./types";
 import { ValidatorFnsModules } from "./gossipHandlers";
 import { NetworkWorker, NetworkWorkerModules } from "./worker";
+import { Jiffyscan } from "../../jiffyscan/publish";
 
 export type NetworkProcessorModules = NetworkWorkerModules &
   ValidatorFnsModules & {
     relayersConfig: Config;
     events: NetworkEventBus;
+    jiffyscan: Jiffyscan;
   };
 
 export type NetworkProcessorOpts = {
@@ -107,7 +109,7 @@ export class NetworkProcessor {
         if (
           this.opts.maxGossipTopicConcurrency !== undefined &&
           this.gossipTopicConcurrency[topic] >
-            this.opts.maxGossipTopicConcurrency
+          this.opts.maxGossipTopicConcurrency
         ) {
           // Reached concurrency limit for topic, continue to next topic
           continue;

@@ -25,6 +25,7 @@ import { getCoreTopics } from "./gossip/topic";
 import { Discv5Worker } from "./discv5";
 import { NetworkProcessor } from "./processor";
 import { pooledUserOpHashes, pooledUserOpsByHash } from "./reqresp";
+import { Jiffyscan, JiffyscanParams } from "../jiffyscan/publish";
 
 type NetworkModules = {
   libp2p: Libp2p;
@@ -38,6 +39,7 @@ type NetworkModules = {
   relayersConfig: Config;
   executor: Executor;
   metrics: AllChainsMetrics | null;
+  jiffyscan: Jiffyscan;
 };
 
 export type NetworkInitOptions = {
@@ -47,6 +49,7 @@ export type NetworkInitOptions = {
   executor: Executor;
   peerStoreDir?: string;
   metrics: AllChainsMetrics | null;
+  jiffyscanParams: JiffyscanParams;
 };
 
 export class Network implements INetwork {
@@ -66,6 +69,7 @@ export class Network implements INetwork {
 
   relayersConfig: Config;
   subscribedMempools = new Set<string>();
+  jiffyscan: Jiffyscan;
 
   constructor(opts: NetworkModules) {
     const {
@@ -80,6 +84,7 @@ export class Network implements INetwork {
       relayersConfig,
       executor,
       metrics,
+      jiffyscan
     } = opts;
     this.libp2p = libp2p;
     this.reqResp = reqResp;
@@ -93,16 +98,18 @@ export class Network implements INetwork {
     this.relayersConfig = relayersConfig;
     this.executor = executor;
     this.metrics = metrics;
+    this.jiffyscan = jiffyscan;
     this.logger.info("Initialised the bundler node module", "node");
   }
 
   static async init(options: NetworkInitOptions): Promise<Network> {
-    const { peerId, relayersConfig, executor, metrics } = options;
+    const { peerId, relayersConfig, executor, metrics, jiffyscanParams } = options;
     const libp2p = await createNodeJsLibp2p(peerId, options.opts, {
       peerStoreDir: options.peerStoreDir,
     });
 
     const peersData = new PeersData();
+    const jiffyscan = new Jiffyscan(jiffyscanParams);
     const peerRpcScores = new PeerRpcScoreStore();
     const networkEventBus = new NetworkEventBus();
     const gossip = new BundlerGossipsub({
@@ -133,7 +140,7 @@ export class Network implements INetwork {
     });
 
     const networkProcessor = new NetworkProcessor(
-      { events: networkEventBus, relayersConfig, executor, metrics },
+      { events: networkEventBus, relayersConfig, executor, metrics, jiffyscan },
       {}
     );
 
@@ -160,6 +167,7 @@ export class Network implements INetwork {
       relayersConfig,
       executor,
       metrics,
+      jiffyscan
     });
   }
 
