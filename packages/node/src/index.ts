@@ -15,6 +15,7 @@ import { Network } from "./network/network";
 import { SyncService } from "./sync";
 import { IBundlerNodeOptions } from "./options";
 import { getApi } from "./api";
+import { JiffyscanParams } from "./jiffyscan";
 
 export * from "./options";
 
@@ -43,6 +44,7 @@ export interface BundlerNodeInitOptions {
   redirectRpc: boolean;
   bundlingMode: BundlingMode;
   metricsOptions: MetricsOptions;
+  jiffyscanParams: JiffyscanParams;
 }
 
 export class BundlerNode {
@@ -69,6 +71,7 @@ export class BundlerNode {
       redirectRpc,
       bundlingMode,
       metricsOptions,
+      jiffyscanParams
     } = opts;
     let { peerId } = opts;
 
@@ -95,7 +98,7 @@ export class BundlerNode {
     const syncService = new SyncService({
       network,
       metrics: metrics?.chains || null,
-    });
+    }, jiffyscanParams);
 
     const nodeApi = getApi({ network });
 
@@ -142,11 +145,11 @@ export class BundlerNode {
 
     metricsOptions.enable
       ? await getHttpMetricsServer(
-          metricsOptions.port,
-          metricsOptions.host,
-          metrics!.registry,
-          logger
-        )
+        metricsOptions.port,
+        metricsOptions.host,
+        metrics!.registry,
+        logger
+      )
       : null;
 
     const bundler = new ApiApp({

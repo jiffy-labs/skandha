@@ -15,19 +15,24 @@ import {
   SyncModules,
   SyncState,
 } from "./interface";
+import { Jiffysan, JiffyscanParams } from "../jiffyscan";
 
 export class SyncService implements ISyncService {
   state: SyncState;
   peers: PeerMap<PeerState> = new PeerMap();
 
+  jiffyscan: Jiffysan;
+
   private readonly network: INetwork;
   private readonly metrics: AllChainsMetrics | null;
 
-  constructor(modules: SyncModules) {
+  constructor(modules: SyncModules, jiffyscanParams: JiffyscanParams) {
     this.state = SyncState.Stalled;
 
     this.network = modules.network;
     this.metrics = modules.metrics;
+
+    this.jiffyscan = new Jiffysan(jiffyscanParams);
 
     this.network.events.on(NetworkEvent.peerConnected, this.addPeer);
     this.network.events.on(NetworkEvent.peerDisconnected, this.removePeer);
@@ -50,6 +55,7 @@ export class SyncService implements ISyncService {
    * A peer has connected which has blocks that are unknown to us.
    */
   private addPeer = (peerId: PeerId, status: ts.Status): void => {
+    console.log('adding peer', peerId);
     if (this.peers.get(peerId)) {
       return;
     }

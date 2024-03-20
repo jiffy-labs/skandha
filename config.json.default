@@ -1,14 +1,14 @@
 {
   "networks": {
-    "dev": {
+    "sepolia": {
       "entryPoints": [
         "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
       ],
       "relayers": [
-        "test test test test test test test test test test test junk",
-        "0x0101010101010101010101010101010101010101010101010101010101010101"
+        "0x83da5ea4d1e3e56fe71a98e04caa827b55115900bf45d10827ff153ebbc3534a"
       ],
-      "rpcEndpoint": "http://localhost:8545"
+      "rpcEndpoint": "https://eth-sepolia.g.alchemy.com/v2/_7TSIzXf_TcjLnbiYFIknD8b_8hHG8G7",
+      "beneficiary": "0xA6E6af08cfc97dA1Efbf91e87c8E89392aEE6700"
     }
   }
 }

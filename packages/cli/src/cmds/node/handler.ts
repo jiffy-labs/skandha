@@ -10,8 +10,10 @@ import { MetricsOptions } from "types/lib/options/metrics";
 import { IGlobalArgs } from "../../options";
 import { mkdir, readFile } from "../../util";
 import { initPeerIdAndEnr } from "./initPeerIdAndEnr";
+import { JiffyscanParams } from "../../../../node/src/jiffyscan";
 
 export async function nodeHandler(args: IGlobalArgs): Promise<void> {
+  console.log('wtf')
   const params = await getNodeConfigFromArgs(args);
 
   //create the necessary directories
@@ -77,6 +79,7 @@ export async function nodeHandler(args: IGlobalArgs): Promise<void> {
     bundlingMode: params.executor.bundlingMode,
     peerId,
     metricsOptions: params.metrics,
+    jiffyscanParams: params.jiffyscanParams
   });
 
   await node.start();
@@ -92,6 +95,7 @@ export async function getNodeConfigFromArgs(args: IGlobalArgs): Promise<{
   api: ApiOptions;
   executor: ExecutorOptions;
   metrics: MetricsOptions;
+  jiffyscanParams: JiffyscanParams;
 }> {
   const entries = new Map(Object.entries(args));
 
@@ -124,6 +128,10 @@ export async function getNodeConfigFromArgs(args: IGlobalArgs): Promise<{
       port: entries.get("metrics.port"),
       host: entries.get("metrics.host"),
     },
+    jiffyscanParams: {
+      redisUrl: entries.get("jiffyRedisUrl"),
+      redisPort: entries.get("jiffyRedisPort"),
+    }
   };
 
   return ret;

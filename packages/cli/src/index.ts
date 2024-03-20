@@ -4,6 +4,7 @@
 import { YargsError } from "./util";
 import { getSkandhaCli, yarg } from "./cli";
 
+console.log('here');
 const bundler = getSkandhaCli();
 
 void bundler

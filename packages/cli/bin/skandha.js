@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-await import("../lib/index.js");
+await import("../lib/cli/src/index.js");

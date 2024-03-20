@@ -24,8 +24,26 @@ interface IGlobalSingleArgs {
   redirectRpc: boolean;
 }
 
+interface JiffyscanRedis {
+  jiffyRedisUrl: string;
+  jiffyRedisPort: number;
+}
+
 export const defaultNetwork = "goerli";
 export const defaultNetworksFile = "config.json";
+
+const jiffyscanRedisOptions: ICliCommandOptions<JiffyscanRedis> = {
+  jiffyRedisUrl: {
+    description: "Jiffyscan Redis URL",
+    type: "string",
+    default: "localhost",
+  },
+  jiffyRedisPort: {
+    description: "Jiffyscan Redis Port",
+    type: "number",
+    default: 6379,
+  },
+};
 
 const globalSingleOptions: ICliCommandOptions<IGlobalSingleArgs> = {
   configFile: {
@@ -58,7 +76,7 @@ const globalSingleOptions: ICliCommandOptions<IGlobalSingleArgs> = {
 export type IGlobalArgs = IGlobalSingleArgs &
   IApiArgs &
   INetworkArgs &
-  IExecutorArgs;
+  IExecutorArgs & JiffyscanRedis;
 
 export const globalOptions = {
   ...globalSingleOptions,
@@ -66,6 +84,7 @@ export const globalOptions = {
   ...networkOptions,
   ...executorOptions,
   ...metricsOptions,
+  ...jiffyscanRedisOptions
 };
 
 export type IStandaloneGlobalArgs = IGlobalSingleArgs &
